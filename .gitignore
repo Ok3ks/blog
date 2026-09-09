@@ -23,4 +23,4 @@ pnpm-debug.log*
 !.vscode/extensions.json
 .idea/
 
-/drafts/**.md
+*/drafts/**.md
