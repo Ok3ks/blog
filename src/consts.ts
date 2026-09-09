@@ -4,13 +4,6 @@ export const SITE_DESCRIPTION =
   'Full-stack software engineer working on AI/ML research and applications.';
 export const AUTHOR = 'Emmanuel Okedele';
 
-// Navigation links shown in the header.
-export const NAV_LINKS = [
-  { href: '/', label: 'Home' },
-  { href: '/blog', label: 'Blog' },
-  { href: '/about', label: 'About' },
-];
-
 // Optional social links shown in the footer. Leave empty to hide.
 export const SOCIAL_LINKS = [
   { href: 'https://github.com/Ok3ks', label: 'GitHub' },

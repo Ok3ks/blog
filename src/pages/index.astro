@@ -2,27 +2,52 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
 import { getAllSummaries } from '../lib/posts';
-import { withBase } from '../lib/url';
-import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR, SOCIAL_LINKS } from '../consts';
 
-const posts = (await getAllSummaries()).slice(0, 5);
+const posts = await getAllSummaries();
+
+// Open-source contributions, from the GitHub profile.
+const contributions = [
+  { label: 'opsdroid #2046', href: 'https://github.com/opsdroid/opsdroid/pull/2046' },
+  { label: 'aiohttp #9745', href: 'https://github.com/aio-libs/aiohttp/pull/9745' },
+  { label: 'aiohttp #9728', href: 'https://github.com/aio-libs/aiohttp/pull/9728' },
+  { label: 'pymc #7854', href: 'https://github.com/pymc-devs/pymc/pull/7854' },
+];
 ---
 
 <BaseLayout>
   <section class="hero">
     <h1>{SITE_TITLE}</h1>
     <p class="lead muted">{SITE_DESCRIPTION}</p>
+    <p>
+      Hi 👋 I'm {AUTHOR}. This is where I write up experiments, notes, and
+      things I'm learning — mostly around machine learning, NLP, and model
+      evaluation.
+    </p>
+    <p class="muted small">
+      Open-source contributions:
+      {
+        contributions.map((c, i) => (
+          <>
+            {i > 0 && ', '}
+            <a href={c.href} rel="noopener" target="_blank">{c.label}</a>
+          </>
+        ))
+      }, and co-contributor to
+      <a href="https://github.com/HAKSOAT/acho" rel="noopener" target="_blank">Acho</a>.
+    </p>
   </section>
 
-  <section class="recent">
-    <div class="section-head">
-      <h2>Latest posts</h2>
-      <a href={withBase('/blog')}>View all →</a>
-    </div>
-    <div class="post-grid">
-      {posts.map((post) => <PostCard post={post} />)}
-    </div>
-  </section>
+  {
+    posts.length > 0 && (
+      <section class="recent">
+        <h2>Posts</h2>
+        <div class="post-grid">
+          {posts.map((post) => <PostCard post={post} />)}
+        </div>
+      </section>
+    )
+  }
 
   <style>
     .hero {
@@ -37,15 +62,11 @@ const posts = (await getAllSummaries()).slice(0, 5);
       font-size: 1.2rem;
       margin-top: 0.5rem;
     }
-    .section-head {
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 1rem;
-      margin-top: 2rem;
+    .small {
+      font-size: 0.9rem;
     }
-    .section-head h2 {
-      margin: 0;
+    .recent h2 {
+      margin-top: 2.5rem;
     }
     .post-grid {
       display: grid;

@@ -1,33 +1,13 @@
 ---
-import { SITE_TITLE, NAV_LINKS } from '../consts';
-import { withBase, stripBase } from '../lib/url';
+import { SITE_TITLE } from '../consts';
+import { withBase } from '../lib/url';
 import ThemeToggle from './ThemeToggle.astro';
-
-const current = stripBase(Astro.url.pathname);
-
-function isActive(path: string) {
-  if (path === '/') return current === '/';
-  return current === path || current.startsWith(path + '/');
-}
 ---
 
 <header class="site-header">
   <div class="container container--wide header-inner">
     <a class="brand" href={withBase('/')}>{SITE_TITLE}</a>
-    <nav class="nav" aria-label="Primary">
-      {
-        NAV_LINKS.map((link) => (
-          <a
-            href={withBase(link.href)}
-            class:list={['nav-link', { active: isActive(link.href) }]}
-            aria-current={isActive(link.href) ? 'page' : undefined}
-          >
-            {link.label}
-          </a>
-        ))
-      }
-      <ThemeToggle />
-    </nav>
+    <ThemeToggle />
   </div>
 </header>
 
@@ -61,38 +41,9 @@ function isActive(path: string) {
     color: var(--color-accent);
   }
 
-  .nav {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-  }
-
-  .nav-link {
-    color: var(--color-text-muted);
-    padding: 0.4rem 0.7rem;
-    border-radius: var(--radius);
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-
-  .nav-link:hover {
-    color: var(--color-text);
-    background: var(--color-surface);
-    text-decoration: none;
-  }
-
-  .nav-link.active {
-    color: var(--color-accent);
-    font-weight: 600;
-  }
-
   @media (max-width: 480px) {
     .brand {
       font-size: 1rem;
-    }
-    .nav-link {
-      padding: 0.4rem 0.5rem;
-      font-size: 0.9rem;
     }
   }
 </style>
