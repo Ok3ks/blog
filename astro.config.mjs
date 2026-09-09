@@ -3,12 +3,10 @@ import { defineConfig } from 'astro/config';
 import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 
-// NOTE: Update `site` to your GitHub Pages URL and `base` to your repo name.
-// For a project page the URL is https://<user>.github.io/<repo> so:
-//   site: 'https://<user>.github.io', base: '/blog'
-// For a user/org page repo named <user>.github.io, set base: '/' (or omit).
+// Served on the custom domain hi-emmanuel.com (GitHub Pages origin, Cloudflare
+// in front). Site lives at the domain root, so base is '/'. See deploy.md.
 export default defineConfig({
-  site: 'https://ok3ks.github.io',
-  base: '/blog',
+  site: 'https://hi-emmanuel.com',
+  base: '/',
   integrations: [mdx(), sitemap()],
 });
