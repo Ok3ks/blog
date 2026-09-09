@@ -1,0 +1,82 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import { getExternalPosts, type ExternalPost } from '../../lib/externalPosts';
+
+// One route per republished external post.
+export async function getStaticPaths() {
+  const posts = await getExternalPosts();
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: post,
+  }));
+}
+
+type Props = ExternalPost;
+
+const post = Astro.props;
+---
+
+<BaseLayout title={post.title} description={post.description} canonical={post.link}>
+  <article class="post">
+    <header class="post-header">
+      <p class="source-banner muted">
+        Originally published on {post.source}.
+        {post.link && <a href={post.link} rel="canonical">View the original →</a>}
+      </p>
+      <h1>{post.title}</h1>
+      <p class="post-meta muted"><FormattedDate date={post.pubDate} /></p>
+    </header>
+
+    <!-- Full content from the source feed. -->
+    <div class="post-body" set:html={post.contentHtml}></div>
+
+    <footer class="post-footer">
+      {
+        post.link && (
+          <a class="original-link" href={post.link} rel="canonical">
+            Read this post on {post.source} →
+          </a>
+        )
+      }
+    </footer>
+  </article>
+
+  <style>
+    .post-header {
+      margin-bottom: 2rem;
+    }
+    .source-banner {
+      font-size: 0.9rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--color-surface);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius);
+      margin: 0 0 1.5rem;
+    }
+    .post-header h1 {
+      margin-top: 0;
+      font-size: 2.4rem;
+      letter-spacing: -0.02em;
+    }
+    .post-meta {
+      font-size: 0.95rem;
+      margin: 0.5rem 0 0;
+    }
+    .post-body {
+      font-size: 1.08rem;
+    }
+    .post-body :global(img) {
+      border-radius: var(--radius);
+      margin: 1.5rem 0;
+    }
+    .post-footer {
+      margin-top: 3rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+    .original-link {
+      font-weight: 600;
+    }
+  </style>
+</BaseLayout>

@@ -1,0 +1,82 @@
+---
+import type { PostSummary } from '../lib/posts';
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  post: PostSummary;
+}
+
+const { post } = Astro.props;
+---
+
+<article class="card">
+  <a class="card-link" href={post.url}>
+    <div class="card-head">
+      <h2 class="card-title">{post.title}</h2>
+      {post.source && <span class="badge">{post.source}</span>}
+    </div>
+    <p class="card-date muted"><FormattedDate date={post.pubDate} /></p>
+    <p class="card-desc">{post.description}</p>
+    <span class="card-more">Read more →</span>
+  </a>
+</article>
+
+<style>
+  .card {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    transition: border-color var(--transition), transform var(--transition),
+      box-shadow var(--transition);
+  }
+  .card:hover {
+    border-color: var(--color-accent);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  .card-link {
+    display: block;
+    padding: 1.5rem;
+    color: inherit;
+  }
+  .card-link:hover {
+    text-decoration: none;
+  }
+  .card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+  .card-title {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--color-text);
+    letter-spacing: -0.01em;
+  }
+  .badge {
+    flex: none;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--color-text-muted);
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+  .card-date {
+    margin: 0.35rem 0 0.75rem;
+    font-size: 0.85rem;
+  }
+  .card-desc {
+    margin: 0 0 0.75rem;
+    color: var(--color-text-muted);
+  }
+  .card-more {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--color-accent);
+  }
+</style>

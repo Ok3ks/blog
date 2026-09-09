@@ -1,0 +1,53 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  canonical?: string;
+  wide?: boolean;
+}
+
+const {
+  title = SITE_TITLE,
+  description = SITE_DESCRIPTION,
+  image,
+  canonical,
+  wide = false,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <BaseHead title={title} description={description} image={image} canonical={canonical} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <Header />
+    <main id="main" class:list={['container', { 'container--wide': wide }]}>
+      <slot />
+    </main>
+    <Footer />
+
+    <style>
+      .skip-link {
+        position: absolute;
+        left: -999px;
+        top: 0.5rem;
+        z-index: 100;
+        background: var(--color-accent);
+        color: #fff;
+        padding: 0.5rem 1rem;
+        border-radius: var(--radius);
+      }
+      .skip-link:focus {
+        left: 0.5rem;
+      }
+    </style>
+  </body>
+</html>

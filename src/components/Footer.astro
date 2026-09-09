@@ -1,0 +1,48 @@
+---
+import { AUTHOR, SOCIAL_LINKS } from '../consts';
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container container--wide footer-inner">
+    <p class="muted">© {year} {AUTHOR}</p>
+    {
+      SOCIAL_LINKS.length > 0 && (
+        <nav class="social" aria-label="Social">
+          {SOCIAL_LINKS.map((link) => (
+            <a href={link.href} rel="me noopener" target="_blank">
+              {link.label}
+            </a>
+          ))}
+        </nav>
+      )
+    }
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    border-top: 1px solid var(--color-border);
+    padding-block: 2rem;
+    margin-top: 3rem;
+  }
+
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .footer-inner p {
+    margin: 0;
+    font-size: 0.9rem;
+  }
+
+  .social {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.9rem;
+  }
+</style>
