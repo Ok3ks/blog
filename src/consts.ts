@@ -7,6 +7,8 @@ export const AUTHOR = 'Emmanuel Okedele';
 // Optional social links shown in the footer. Leave empty to hide.
 export const SOCIAL_LINKS = [
   { href: 'https://github.com/Ok3ks', label: 'GitHub' },
+  { href: 'https://www.linkedin.com/in/emmanuel-okedele-7654a01b0', label: 'LinkedIn' },
+  { href: 'mailto:okedeleayodeji60@outlook.com', label: 'Email' },
 ];
 
 export const EXTERNAL_FEEDS: { source: string; url: string }[] = [

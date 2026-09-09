@@ -10,6 +10,8 @@ export interface PostSummary {
   url: string;
   /** External source name (e.g. "Medium"), or null for local posts. */
   source: string | null;
+  /** Custom tags (from local post frontmatter); empty for external posts. */
+  tags: string[];
 }
 
 export async function getLocalSummaries(): Promise<PostSummary[]> {
@@ -20,6 +22,7 @@ export async function getLocalSummaries(): Promise<PostSummary[]> {
     pubDate: p.data.pubDate,
     url: withBase(`blog/${p.id}/`),
     source: null,
+    tags: p.data.tags,
   }));
 }
 
@@ -31,6 +34,7 @@ export async function getExternalSummaries(): Promise<PostSummary[]> {
     pubDate: p.pubDate,
     url: withBase(`external/${p.slug}/`),
     source: p.source,
+    tags: [],
   }));
 }
 
