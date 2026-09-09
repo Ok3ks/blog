@@ -16,9 +16,7 @@ export const SOCIAL_LINKS = [
   { href: 'https://github.com/Ok3ks', label: 'GitHub' },
 ];
 
-// External blogs to republish from, via their RSS feeds. Each post is fetched
-// at build time and rendered in full on this site, with a canonical link back
-// to the original. Leave empty to disable. Examples:
-//   { source: 'Medium', url: 'https://medium.com/feed/@your-username' },
-//   { source: 'Substack', url: 'https://your-name.substack.com/feed' },
-export const EXTERNAL_FEEDS: { source: string; url: string }[] = [];
+export const EXTERNAL_FEEDS: { source: string; url: string }[] = [
+  { source: 'Medium', url: 'https://medium.com/feed/@emmanuelokedele' },
+  { source: 'Substack', url: 'https://emmanuel-okedele.substack.com/feed' }
+];
