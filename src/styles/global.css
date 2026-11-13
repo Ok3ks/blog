@@ -12,6 +12,7 @@
   --color-text-muted: #57606a;
   --color-accent: #2f6feb;
   --color-accent-hover: #1f56c4;
+  --color-on-accent: #ffffff;
   --color-code-bg: #f2f3f5;
 
   /* Typography */
@@ -26,7 +27,7 @@
 
   /* Layout */
   --content-width: 44rem;
-  --wide-width: 60rem;
+  --wide-width: 76rem;
   --space: 1rem;
   --radius: 8px;
 
@@ -44,6 +45,7 @@
   --color-text-muted: #9198a1;
   --color-accent: #589bff;
   --color-accent-hover: #79b0ff;
+  --color-on-accent: #0d1117;
   --color-code-bg: #161b22;
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.5);
@@ -98,6 +100,21 @@ svg {
 main {
   padding-block: 2.5rem 4rem;
   min-height: 60vh;
+}
+
+/* Keep anchor targets clear of the sticky header. */
+[id] {
+  scroll-margin-top: 5rem;
+}
+
+@media (max-width: 560px) {
+  main {
+    padding-top: 1.5rem;
+  }
+  /* The header isn't sticky here. */
+  [id] {
+    scroll-margin-top: 1rem;
+  }
 }
 
 /* ---------- Typography ---------- */
@@ -198,4 +215,21 @@ pre code {
   outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 2px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

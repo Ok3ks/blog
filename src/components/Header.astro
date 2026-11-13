@@ -7,6 +7,12 @@ import ThemeToggle from './ThemeToggle.astro';
 <header class="site-header">
   <div class="container container--wide header-inner">
     <a class="brand" href={withBase('/')}>{SITE_TITLE}</a>
+    <!-- Conventional top nav (Jakob's Law): visitors expect the main sections up here. -->
+    <nav class="site-nav" aria-label="Main">
+      <a href={withBase('/#posts')}>Writing &amp; Talks</a>
+      <!-- Contact is an action, not a section, so it's set apart (Law of Proximity). -->
+      <a class="nav-contact" href={withBase('/#contact')}>Contact</a>
+    </nav>
     <ThemeToggle />
   </div>
 </header>
@@ -23,17 +29,19 @@ import ThemeToggle from './ThemeToggle.astro';
 
   .header-inner {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
+    gap: 0.5rem 1rem;
     padding-block: 0.85rem;
   }
 
   .brand {
+    margin-right: auto;
     font-weight: 800;
     font-size: 1.15rem;
     color: var(--color-text);
     letter-spacing: -0.02em;
+    white-space: nowrap;
   }
 
   .brand:hover {
@@ -41,9 +49,62 @@ import ThemeToggle from './ThemeToggle.astro';
     color: var(--color-accent);
   }
 
-  @media (max-width: 480px) {
+  .site-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  /* Generous hit areas (Fitts's Law). */
+  .site-nav a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.5rem;
+    padding-inline: 0.6rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--color-text-muted);
+    border-radius: var(--radius);
+  }
+
+  .site-nav a:hover {
+    color: var(--color-text);
+    background: var(--color-surface);
+    text-decoration: none;
+  }
+
+  .site-nav .nav-contact {
+    margin-left: 1rem;
+    padding-inline: 0.9rem;
+    color: var(--color-text);
+    border: 1px solid var(--color-border);
+  }
+
+  .site-nav .nav-contact:hover {
+    border-color: var(--color-accent);
+  }
+
+  /* Small screens: name and theme toggle on top, nav on its own row below.
+     Two rows is too tall to pin, so the header scrolls away here. */
+  @media (max-width: 560px) {
+    .site-header {
+      position: static;
+    }
     .brand {
-      font-size: 1rem;
+      font-size: 1.05rem;
+    }
+    .site-nav {
+      order: 3;
+      flex-basis: 100%;
+      gap: 0.75rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid var(--color-border);
+    }
+    .site-nav a:first-child {
+      margin-left: -0.6rem;
+    }
+    .site-nav .nav-contact {
+      margin-left: auto;
     }
   }
 </style>

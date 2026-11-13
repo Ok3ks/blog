@@ -34,6 +34,27 @@ function slugify(input: string): string {
     .slice(0, 80);
 }
 
+// Plain-text teaser for feeds (e.g. Medium) that ship no summary.
+function excerpt(html: string, max = 160): string {
+  const text = html
+    .replace(/<(figure|pre|style|script|h[1-6])\b[\s\S]*?<\/\1>/gi, ' ')
+    // Medium marks headings up as all-bold paragraphs.
+    .replace(/<p>\s*<(strong|b)>[^<]*<\/\1>\s*<\/p>/gi, ' ')
+    .replace(/<[^>]+>/g, ' ')
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCodePoint(parseInt(n, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(' '))}…`;
+}
+
 // Fetch + parse once per build, then reuse across pages.
 let cache: ExternalPost[] | null = null;
 
@@ -66,16 +87,18 @@ export async function getExternalPosts(): Promise<ExternalPost[]> {
         seen.add(unique);
 
         const dateStr = item.isoDate || item.pubDate;
+        const contentHtml = item.contentEncoded || item.content || '';
+        const snippet = (item.contentSnippet || '').replace(/\s+/g, ' ').trim().slice(0, 200);
         posts.push({
           slug: unique,
           title,
-          description: (item.contentSnippet || '').replace(/\s+/g, ' ').trim().slice(0, 200),
+          description: snippet || excerpt(contentHtml),
           pubDate: dateStr ? new Date(dateStr) : new Date(0),
           source: feed.source,
           link: item.link || '',
           // NOTE: rendered with set:html. This is your own content from feeds
           // you control; add sanitization here if you ingest untrusted feeds.
-          contentHtml: item.contentEncoded || item.content || '',
+          contentHtml,
         });
       }
     } catch (err) {

@@ -8,13 +8,21 @@ interface Props {
   start?: number;
   event?: string;
   date?: string;
+  /** Filter facet when shown in the combined writing/talks feed. */
+  source?: string;
 }
 
-const { id, title, start = 0, event, date } = Astro.props;
+const { id, title, start = 0, event, date, source = 'Talks' } = Astro.props;
 const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` : ''}`;
 ---
 
-<article class="talk">
+<article
+  class="talk"
+  data-post
+  data-source={source}
+  data-tags=""
+  data-search={title.toLowerCase()}
+>
   <!-- Thumbnail first; the iframe only loads on click to keep the page light. -->
   <div class="talk-media">
     <button
@@ -34,7 +42,7 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
         height="360"
       />
       <span class="talk-play" aria-hidden="true">
-        <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+        <svg viewBox="0 0 24 24" width="20" height="20"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
       </span>
     </button>
   </div>
@@ -45,9 +53,9 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
     {
       (event || date) && (
         <p class="talk-meta muted">
-          {event}
-          {event && date && ' · '}
           {date && <FormattedDate date={new Date(date)} />}
+          {event && date && ' · '}
+          {event}
         </p>
       )
     }
@@ -55,12 +63,29 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
 </article>
 
 <style>
+  /* Compact card: thumbnail strip beside the text. Expands into a 16:9
+     player once the video is started. */
   .talk {
+    display: grid;
+    grid-template-columns: 6.5rem 1fr;
+    align-items: stretch;
     border: 1px solid var(--color-border);
     border-radius: var(--radius);
     background: var(--color-surface);
     overflow: hidden;
     transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .talk.is-playing {
+    grid-template-columns: 1fr;
+  }
+  .talk[hidden] {
+    display: none;
+  }
+  /* Give the player room where the grid has more than one column. */
+  @media (min-width: 640px) {
+    .talk.is-playing {
+      grid-column: span 2;
+    }
   }
   .talk:hover {
     border-color: var(--color-accent);
@@ -68,10 +93,16 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
   }
   .talk-media {
     position: relative;
-    aspect-ratio: 16 / 9;
+    min-height: 5.5rem;
     background: #000;
   }
+  .talk.is-playing .talk-media {
+    aspect-ratio: 16 / 9;
+  }
+  /* Fill the strip without letting the image set the card's height. */
   .talk-player {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -86,6 +117,8 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
     object-fit: cover;
   }
   .talk-media :global(iframe) {
+    position: absolute;
+    inset: 0;
     display: block;
     width: 100%;
     height: 100%;
@@ -97,8 +130,8 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
     left: 50%;
     display: grid;
     place-items: center;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: 2.5rem;
+    height: 2.5rem;
     transform: translate(-50%, -50%);
     color: #fff;
     background: rgba(0, 0, 0, 0.65);
@@ -111,11 +144,13 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
     transform: translate(-50%, -50%) scale(1.08);
   }
   .talk-body {
-    padding: 0.9rem 1.1rem 1rem;
+    align-self: center;
+    padding: 0.75rem 1rem;
   }
   .talk-title {
     margin: 0;
-    font-size: 1.05rem;
+    font-size: 0.98rem;
+    line-height: 1.35;
     letter-spacing: -0.01em;
   }
   .talk-title a {
@@ -125,8 +160,9 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
     color: var(--color-accent);
   }
   .talk-meta {
-    margin: 0.3rem 0 0;
-    font-size: 0.85rem;
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    line-height: 1.4;
   }
 </style>
 
@@ -144,6 +180,7 @@ const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` 
         iframe.allow =
           'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
         iframe.allowFullscreen = true;
+        btn.closest('.talk')?.classList.add('is-playing');
         btn.replaceWith(iframe);
         iframe.focus();
       },
