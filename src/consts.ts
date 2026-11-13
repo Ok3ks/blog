@@ -11,6 +11,22 @@ export const SOCIAL_LINKS = [
   { href: 'mailto:okedeleayodeji60@outlook.com', label: 'Email' },
 ];
 
+export const TALKS: {
+  title: string;
+  video: string;
+  start?: string | number;
+  event?: string;
+  date?: string;
+}[] = [
+  {
+    title: 'LNNs, TFMs, and Building Beyond GenAI',
+    video: 'https://www.youtube.com/watch?v=rzrULkgziAQ',
+    start: '1:37:00',
+    event: 'AI Signals #33',
+    date: '2026-07-24',
+  },
+];
+
 export const EXTERNAL_FEEDS: { source: string; url: string }[] = [
   { source: 'Medium', url: 'https://medium.com/feed/@emmanuelokedele' },
   { source: 'Substack', url: 'https://emmanuel-okedele.substack.com/feed' }

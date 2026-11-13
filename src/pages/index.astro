@@ -1,10 +1,19 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import PostCard from '../components/PostCard.astro';
+import TalkCard from '../components/TalkCard.astro';
 import { getAllSummaries } from '../lib/posts';
-import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR, SOCIAL_LINKS } from '../consts';
+import { SITE_TITLE, SITE_DESCRIPTION, AUTHOR, SOCIAL_LINKS, TALKS } from '../consts';
+import { youtubeId, toSeconds } from '../lib/youtube';
 
 const posts = await getAllSummaries();
+
+// Talks with a resolvable YouTube ID, newest first.
+const talks = TALKS.flatMap((t) => {
+  const id = youtubeId(t.video);
+  if (!id) console.warn(`[talks] Could not parse YouTube video: "${t.video}"`);
+  return id ? [{ ...t, id, start: toSeconds(t.start) }] : [];
+}).sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''));
 
 // Filter facets, derived from the posts themselves.
 const sources = Array.from(
@@ -43,6 +52,25 @@ const contributions = [
       <a href="https://github.com/HAKSOAT/acho" rel="noopener" target="_blank">Acho</a>.
     </p>
   </section>
+
+  {
+    talks.length > 0 && (
+      <section class="talks">
+        <h2>Talks</h2>
+        <div class="talk-grid">
+          {talks.map((talk) => (
+            <TalkCard
+              id={talk.id}
+              title={talk.title}
+              start={talk.start}
+              event={talk.event}
+              date={talk.date}
+            />
+          ))}
+        </div>
+      </section>
+    )
+  }
 
   {
     posts.length > 0 && (
@@ -106,8 +134,15 @@ const contributions = [
     .small {
       font-size: 0.9rem;
     }
-    .recent h2 {
+    .recent h2,
+    .talks h2 {
       margin-top: 2.5rem;
+    }
+    .talk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+      gap: 1.25rem;
+      margin-top: 1.25rem;
     }
     .post-grid {
       display: grid;

@@ -1,0 +1,153 @@
+---
+import FormattedDate from './FormattedDate.astro';
+
+interface Props {
+  id: string;
+  title: string;
+  /** Start offset in seconds. */
+  start?: number;
+  event?: string;
+  date?: string;
+}
+
+const { id, title, start = 0, event, date } = Astro.props;
+const watchUrl = `https://www.youtube.com/watch?v=${id}${start ? `&t=${start}s` : ''}`;
+---
+
+<article class="talk">
+  <!-- Thumbnail first; the iframe only loads on click to keep the page light. -->
+  <div class="talk-media">
+    <button
+      type="button"
+      class="talk-player"
+      data-talk-id={id}
+      data-talk-title={title}
+      data-talk-start={start}
+      aria-label={`Play video: ${title}`}
+    >
+      <img
+        src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`}
+        alt=""
+        loading="lazy"
+        decoding="async"
+        width="480"
+        height="360"
+      />
+      <span class="talk-play" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="28" height="28"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+      </span>
+    </button>
+  </div>
+  <div class="talk-body">
+    <h3 class="talk-title">
+      <a href={watchUrl} rel="noopener" target="_blank">{title}</a>
+    </h3>
+    {
+      (event || date) && (
+        <p class="talk-meta muted">
+          {event}
+          {event && date && ' · '}
+          {date && <FormattedDate date={new Date(date)} />}
+        </p>
+      )
+    }
+  </div>
+</article>
+
+<style>
+  .talk {
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius);
+    background: var(--color-surface);
+    overflow: hidden;
+    transition: border-color var(--transition), box-shadow var(--transition);
+  }
+  .talk:hover {
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-md);
+  }
+  .talk-media {
+    position: relative;
+    aspect-ratio: 16 / 9;
+    background: #000;
+  }
+  .talk-player {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: #000;
+    cursor: pointer;
+  }
+  .talk-player img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .talk-media :global(iframe) {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+  }
+  .talk-play {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    display: grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    transform: translate(-50%, -50%);
+    color: #fff;
+    background: rgba(0, 0, 0, 0.65);
+    border-radius: 999px;
+    transition: background var(--transition), transform var(--transition);
+  }
+  .talk-player:hover .talk-play,
+  .talk-player:focus-visible .talk-play {
+    background: var(--color-accent);
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+  .talk-body {
+    padding: 0.9rem 1.1rem 1rem;
+  }
+  .talk-title {
+    margin: 0;
+    font-size: 1.05rem;
+    letter-spacing: -0.01em;
+  }
+  .talk-title a {
+    color: var(--color-text);
+  }
+  .talk-title a:hover {
+    color: var(--color-accent);
+  }
+  .talk-meta {
+    margin: 0.3rem 0 0;
+    font-size: 0.85rem;
+  }
+</style>
+
+<script>
+  for (const btn of document.querySelectorAll<HTMLButtonElement>('[data-talk-id]')) {
+    btn.addEventListener(
+      'click',
+      () => {
+        const iframe = document.createElement('iframe');
+        const start = Number(btn.dataset.talkStart) || 0;
+        iframe.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.talkId}?autoplay=1${
+          start ? `&start=${start}` : ''
+        }`;
+        iframe.title = btn.dataset.talkTitle ?? 'YouTube video';
+        iframe.allow =
+          'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        btn.replaceWith(iframe);
+        iframe.focus();
+      },
+      { once: true }
+    );
+  }
+</script>
